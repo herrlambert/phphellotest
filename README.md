@@ -74,9 +74,35 @@ For production environment:
 
 ### 4. Troubleshooting
 
+#### Common Issues
+
 - **404 Errors**: Check your .htaccess files and make sure mod_rewrite is enabled
 - **500 Errors**: Check your PHP version and server logs
 - **Blank Page**: Enable error reporting temporarily for debugging
+- **Class Not Found Errors**: This is often due to case sensitivity issues on Linux servers
+
+#### Debugging Steps
+
+1. **Use the debug.php file**:
+   - Access `yourdomain.com/debug.php` to see detailed information about your server environment
+   - This will show file paths, PHP version, and class loading status
+
+2. **Check file permissions**:
+   - Make sure all PHP files have 644 permissions
+   - Directories should have 755 permissions
+
+3. **Case sensitivity issues**:
+   - Linux servers are case-sensitive, while Windows is not
+   - Ensure that all file references match the actual case of the files
+   - For example, 'Router.php' is different from 'router.php' on Linux
+
+4. **Try the fallback index**:
+   - If the main index.php is not working, rename `index.fallback.php` to `index.php`
+   - This uses direct class loading instead of the autoloader
+
+5. **Check error logs**:
+   - Look at your server's error logs for more detailed error messages
+   - In cPanel, this is usually under "Error Log" in the Logs section
 
 ## Requirements
 

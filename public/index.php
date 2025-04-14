@@ -9,6 +9,29 @@ define('APP_ROOT', dirname(__DIR__));
 // Load the bootstrap file
 require_once APP_ROOT . '/app/bootstrap.php';
 
+// Ensure Router class is loaded
+$routerPath = APP_ROOT . '/app/core/Router.php';
+if (!file_exists($routerPath)) {
+    // Try case-insensitive search
+    $coreDir = APP_ROOT . '/app/core';
+    if (is_dir($coreDir)) {
+        $files = scandir($coreDir);
+        foreach ($files as $file) {
+            if (strtolower($file) === 'router.php') {
+                $routerPath = $coreDir . '/' . $file;
+                break;
+            }
+        }
+    }
+}
+
+if (!file_exists($routerPath)) {
+    die('Router class not found at: ' . $routerPath);
+}
+
+// Manually include the Router class
+require_once $routerPath;
+
 // Initialize Router
 $router = new \App\Core\Router();
 

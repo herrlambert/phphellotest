@@ -15,7 +15,26 @@ if (file_exists(dirname(__DIR__) . $configFile)) {
 }
 
 // Autoloader
-require_once 'core/Autoloader.php';
+$autoloaderPath = __DIR__ . '/core/Autoloader.php';
+if (!file_exists($autoloaderPath)) {
+    // Try case-insensitive search
+    $coreDir = __DIR__ . '/core';
+    if (is_dir($coreDir)) {
+        $files = scandir($coreDir);
+        foreach ($files as $file) {
+            if (strtolower($file) === 'autoloader.php') {
+                $autoloaderPath = $coreDir . '/' . $file;
+                break;
+            }
+        }
+    }
+}
+
+if (!file_exists($autoloaderPath)) {
+    die('Autoloader not found at: ' . $autoloaderPath);
+}
+
+require_once $autoloaderPath;
 $autoloader = new \App\Core\Autoloader();
 $autoloader->register();
 

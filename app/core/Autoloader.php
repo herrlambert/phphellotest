@@ -16,25 +16,47 @@ class Autoloader
 
     /**
      * Load a class
-     * 
+     *
      * @param string $className The fully-qualified class name
      */
     public function loadClass($className)
     {
         // Convert namespace separators to directory separators
         $className = str_replace('\\', DIRECTORY_SEPARATOR, $className);
-        
+
         // Remove 'App' from the beginning if it exists
         if (strpos($className, 'App' . DIRECTORY_SEPARATOR) === 0) {
             $className = substr($className, 4);
         }
-        
+
         // Build the file path
         $filePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . $className . '.php';
-        
+
+        // Debug information (remove in production)
+        if (!file_exists($filePath)) {
+            error_log("Autoloader: File not found: {$filePath} for class {$className}");
+
+            // Try alternative path (case-sensitive check)
+            $dirName = dirname($filePath);
+            $fileName = basename($filePath);
+
+            if (is_dir($dirName)) {
+                $files = scandir($dirName);
+                foreach ($files as $file) {
+                    if (strtolower($file) === strtolower($fileName)) {
+                        $filePath = $dirName . DIRECTORY_SEPARATOR . $file;
+                        error_log("Autoloader: Found alternative file: {$filePath}");
+                        break;
+                    }
+                }
+            }
+        }
+
         // If the file exists, require it
         if (file_exists($filePath)) {
             require_once $filePath;
+        } else {
+            error_log("Autoloader: Could not load class {$className}");
         }
     }
 }
